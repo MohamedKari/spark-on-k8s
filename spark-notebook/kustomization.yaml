@@ -1,0 +1,6 @@
+resources:
+  - spark-notebook.yaml
+configMapGenerator:
+  - name: spark-notebook-configmap
+    files:
+      - spark-notebook.conf

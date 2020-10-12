@@ -1,0 +1,11 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+
+metadata:
+  name: spark-waymo
+  region: eu-central-1
+
+nodeGroups:
+  - name: ng-2
+    instanceType: m5.large
+    desiredCapacity: 4

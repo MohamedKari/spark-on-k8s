@@ -1,0 +1,76 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: spark-notebook
+  labels:
+    role: spark-notebook
+spec:
+  serviceAccountName: spark
+  containers:
+    - name: spark-notebook
+      image: mokari94/spark-app:latest
+      env:
+        - name: HOME # overwrites HOME so Jupyter will for sure have permission
+          value: "/tmp/.jupyter"
+        - name: PYSPARK_DRIVER_PYTHON
+          value: "jupyter"
+        - name: PYSPARK_DRIVER_PYTHON_OPTS
+          value: "notebook . --ip 0.0.0.0"
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom: 
+            secretKeyRef:
+              name: aws-secrets
+              key: aws-access-key
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom: 
+            secretKeyRef:
+              name: aws-secrets
+              key: aws-secret-key
+      command: [
+        /opt/spark/bin/pyspark ,
+        --master, k8s://https://kubernetes:443,
+        --conf, spark.jars.ivy=/tmp/.ivy,
+        --conf, spark.kubernetes.container.image=mokari94/spark-app:latest,
+        --conf, spark.driver.port=40694,
+        --conf, spark.driver.host=spark-notebook-service,
+        --conf, spark.kubernetes.driver.pod.name=spark-notebook,
+        --properties-file, /etc/config/spark-notebook.conf
+      ]
+      # spark.driver.host sets the name of the headless service
+      # executors will need to send their communication to the driver process
+      # which we want to be on the Jupyter server.
+      # However, pod names are not directly resolvable to the host.
+      # So instead, we use a service that then routes to the pod.
+      # Instead of using a "standard" service that can loadbalance across multiple pods, 
+      # we use a headless service that simply passes through requests to the pod that matches the selector.
+
+      ports:
+      - containerPort: 8888
+      - containerPort: 40694
+
+      volumeMounts:
+      - name: config-volume
+        mountPath: /etc/config/
+
+  volumes:
+    - name: config-volume
+      configMap:
+        name: spark-notebook-configmap
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: spark-notebook-service
+spec:
+  clusterIP: None
+  selector:
+    role: spark-notebook
+  ports:
+    - protocol: TCP
+      port: 8888
+      targetPort: 8888
+      name: jupyter-web-ui
+    - protocol: TCP
+      port: 40694
+      targetPort: 40694
+      name: spark-driver-port

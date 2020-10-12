@@ -1,0 +1,1 @@
+kubectl create secret generic aws-secrets --from-file=../aws-access-key --from-file=../aws-secret-key

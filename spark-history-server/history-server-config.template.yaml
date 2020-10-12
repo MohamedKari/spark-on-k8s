@@ -1,0 +1,23 @@
+image:
+  repository: ${APP_IMAGE_REPO}
+  tag: ${APP_IMAGE_TAG}
+  pullPolicy: Always
+
+environment:
+  SPARK_HISTORY_OPTS:
+    -Dcom.amazonaws.services.s3.enableV4=true
+
+nfs: 
+  enableExampleNFS: false
+
+pvc: 
+  enablePVC: false
+
+s3:
+  enableS3: true
+  enableIAM: false
+  secret: aws-secrets
+  accessKeyName: aws-access-key
+  secretKeyName: aws-secret-key
+  logDirectory: ${S3A_LOG_PATH}
+  endpoint: s3.${AWS_REGION}.amazonaws.com
