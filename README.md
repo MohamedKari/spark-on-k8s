@@ -7,7 +7,7 @@ echo $AWS_ACCESS_KEY_ID > aws-access-key
 echo $AWS_SECRET_ACCESS_KEY > aws-secret-key
 
 # Spin up a Minikube cluster
-cd k8s && make
+cd k8s/minikube && make
 
 # Open a new terminal window to build and push the Spark Base image
 # This will include a submit of th built-in PySpark Pi demo.
