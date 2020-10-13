@@ -1,10 +1,14 @@
-This repo accompanies my blog post under https://blog.mkari.de/posts/spark-on-k8s.
+> This repo accompanies my blog post under https://blog.mkari.de/posts/spark-on-k8s.
 
 ```sh
 git clone https://github.com/MohamedKari/spark-on-k8s && cd spark-on-k8s
 
 echo $AWS_ACCESS_KEY_ID > aws-access-key
 echo $AWS_SECRET_ACCESS_KEY > aws-secret-key
+
+# Setup up your dotenv file
+cp .env-template .env
+vi .env
 
 # Spin up a Minikube cluster
 cd k8s/minikube && make
@@ -26,11 +30,4 @@ cd spark-notebook && make
 kubectl logs -f spark-notebook
 ```
 
-
-
-conf = sc.getConf().getAll()
-conf_dict = dict(conf)
-conf_dict["spark.executor.instances"] = 12
-conf_pairs = list(conf_dict.items())
-conf_pairs
-new_conf = SparkConf().setAll(conf_pairs)
+For details, have a look at the [post](https://blog.mkari.de/posts/spark-on-k8s)!
