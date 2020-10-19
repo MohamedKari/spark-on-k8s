@@ -7,5 +7,5 @@ metadata:
 
 nodeGroups:
   - name: ng-2
-    instanceType: m5.large
-    desiredCapacity: 4
+    instanceType: m5.4xlarge
+    desiredCapacity: 6
