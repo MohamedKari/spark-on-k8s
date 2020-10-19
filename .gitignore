@@ -1,6 +1,7 @@
+.env
 .vscode/settings.json
 spark.conf
 
 aws-access-key
 aws-secret-key
-
+aws-k8s-token
